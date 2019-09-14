@@ -121,5 +121,20 @@ namespace CMS_ShopCart.Areas.Admin.Controllers
 
             return RedirectToAction("EditPage");
         }
+
+        public ActionResult PageDetails(int id)
+        {
+            PageVM model;
+            using(DB db = new DB())
+            {
+                PageDTO dto = db.Pages.Find(id);
+                if(dto == null)
+                {
+                    return Content("The page doesn't exist");
+                }
+                model = new PageVM(dto);
+            }
+            return View(model);
+        }
     }
 }
