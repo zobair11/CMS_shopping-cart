@@ -136,5 +136,59 @@ namespace CMS_ShopCart.Areas.Admin.Controllers
             }
             return View(model);
         }
+
+        public ActionResult DeletePage(int id)
+        {
+            using(DB db = new DB())
+            {
+                PageDTO dto = db.Pages.Find(id);
+                db.Pages.Remove(dto);
+                db.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public void ReorderPages(int [] id)
+        {
+            using(DB db = new DB())
+            {
+                int count = 1;
+                PageDTO dto;
+                foreach(var pageId in id)
+                {
+                    dto = db.Pages.Find(pageId);
+                    dto.Sorting = count;
+                    db.SaveChanges();
+                    count++;
+                }
+            }
+        }
+
+        [HttpGet]
+        public ActionResult EditSidebar()
+        {
+            SidebarVM model;
+
+            using(DB db = new DB())
+            {
+                SidebarDTO dto = db.Sidebar.Find(1);
+                model = new SidebarVM(dto);
+            }
+
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult EditSidebar(SidebarVM model)
+        {
+            using (DB db = new DB())
+            {
+                SidebarDTO dto = db.Sidebar.Find(1);
+                dto.Body = model.Body;
+                db.SaveChanges();
+            }
+            TempData["SM"] = "You have edited the sidebar";
+            return RedirectToAction("EditSidebar");
+        }
+
     }
 }
